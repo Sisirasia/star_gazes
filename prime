@@ -1,15 +1,22 @@
-def is_prime(num):
-    if num < 2:
-        return False
-    for i in range(2, int(num**0.5) + 1):
-        if num % i == 0:
-            return False
-    return True
+def get_stars(repo: str):
+    url = f"https://api.github.com/repos/{repo}"
+    
+    try:
+        response = httpx.get(url)
+        response.raise_for_status()  # Raise an exception for HTTP errors (4xx or 5xx status codes)
+        
+        data = response.json()
+        
+        # Check if the expected key "stargazers_count" is present in the response
+        if "stargazers_count" in data:
+            count = data["stargazers_count"]
+            print(f"{repo} has {count} stars!")
+        else:
+            print(f"Error: Unable to find stargazers_count in the API response for {repo}")
+    
+    except Exception as e:
+        print(f"Error fetching data for {repo}: {e}")
 
-def print_primes_less_than_100():
-    for num in range(2, 100):
-        if is_prime(num):
-            print(num, end=" ")
+# Usage
+get_stars("username/repository")
 
-# Call the function to print prime numbers less than 100
-print_primes_less_than_100()
